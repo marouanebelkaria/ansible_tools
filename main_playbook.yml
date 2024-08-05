@@ -1,0 +1,15 @@
+---
+- name: Install development tools
+  hosts: all
+  become: yes
+  vars_files:
+    - versions.yml
+
+  tasks:
+    - import_playbook: install_git.yml
+    - import_playbook: install_jdk8.yml
+    - import_playbook: install_jdk11.yml
+    - import_playbook: install_maven.yml
+    - import_playbook: install_groovy.yml
+    - import_playbook: install_ant.yml
+    - import_playbook: install_maven_runner.yml

@@ -1,0 +1,31 @@
+---
+- name: Install JDK 11
+  hosts: all
+  become: yes
+  vars_files:
+    - versions.yml
+
+  tasks:
+    - name: Download JDK 11
+      get_url:
+        url: "https://download.java.net/java/GA/jdk11/9/GPL/openjdk-{{ jdk11_version }}_linux-x64_bin.tar.gz"
+        dest: "/tmp/openjdk-{{ jdk11_version }}.tar.gz"
+
+    - name: Extract JDK 11
+      unarchive:
+        src: "/tmp/openjdk-{{ jdk11_version }}.tar.gz"
+        dest: "/appli/bin"
+        remote_src: yes
+
+    - name: Create symlink for JDK 11
+      file:
+        src: "/appli/bin/jdk-{{ jdk11_version }}"
+        dest: "/usr/local/bin/jdk11"
+        state: link
+
+    - name: Set JAVA_HOME for JDK 11
+      lineinfile:
+        path: /etc/profile.d/jdk11.sh
+        line: 'export JAVA_HOME=/usr/local/bin/jdk11'
+        create: yes
+      notify: Refresh profile

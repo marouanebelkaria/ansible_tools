@@ -1,0 +1,31 @@
+---
+- name: Install Ant
+  hosts: all
+  become: yes
+  vars_files:
+    - versions.yml
+
+  tasks:
+    - name: Download Ant
+      get_url:
+        url: "https://downloads.apache.org/ant/binaries/apache-ant-{{ ant_version }}-bin.zip"
+        dest: "/tmp/apache-ant-{{ ant_version }}-bin.zip"
+
+    - name: Extract Ant
+      unarchive:
+        src: "/tmp/apache-ant-{{ ant_version }}-bin.zip"
+        dest: "/appli/bin"
+        remote_src: yes
+
+    - name: Create symlink for Ant
+      file:
+        src: "/appli/bin/apache-ant-{{ ant_version }}"
+        dest: "/usr/local/bin/ant"
+        state: link
+
+    - name: Add Ant to PATH
+      lineinfile:
+        path: /etc/profile.d/ant.sh
+        line: 'export PATH=/usr/local/bin/ant/bin:$PATH'
+        create: yes
+      notify: Refresh profile

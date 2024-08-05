@@ -1,0 +1,31 @@
+---
+- name: Install Maven
+  hosts: all
+  become: yes
+  vars_files:
+    - versions.yml
+
+  tasks:
+    - name: Download Maven
+      get_url:
+        url: "https://apache.osuosl.org/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz"
+        dest: "/tmp/apache-maven-{{ maven_version }}-bin.tar.gz"
+
+    - name: Extract Maven
+      unarchive:
+        src: "/tmp/apache-maven-{{ maven_version }}-bin.tar.gz"
+        dest: "/appli/bin"
+        remote_src: yes
+
+    - name: Create symlink for Maven
+      file:
+        src: "/appli/bin/apache-maven-{{ maven_version }}"
+        dest: "/usr/local/bin/maven"
+        state: link
+
+    - name: Add Maven to PATH
+      lineinfile:
+        path: /etc/profile.d/maven.sh
+        line: 'export PATH=/usr/local/bin/maven/bin:$PATH'
+        create: yes
+      notify: Refresh profile

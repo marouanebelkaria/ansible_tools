@@ -1,0 +1,8 @@
+# versions.yml
+git_version: "2.34.1"
+jdk8_version: "1.8.0"
+jdk11_version: "11.0.2"
+maven_version: "3.8.4"
+groovy_version: "3.0.9"
+ant_version: "1.10.12"
+maven_runner_version: "1.0.0"

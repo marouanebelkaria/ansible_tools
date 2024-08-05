@@ -1,0 +1,19 @@
+---
+- name: Install JDK 8
+  hosts: all
+  become: yes
+  vars_files:
+    - versions.yml
+
+  tasks:
+    - name: Install JDK 8
+      yum:
+        name: "java-{{ jdk8_version }}-openjdk-devel"
+        state: present
+
+    - name: Set JAVA_HOME for JDK 8
+      lineinfile:
+        path: /etc/profile.d/jdk8.sh
+        line: 'export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))'
+        create: yes
+      notify: Refresh profile

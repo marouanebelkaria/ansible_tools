@@ -1,0 +1,24 @@
+---
+- name: Install Maven Runner
+  hosts: all
+  become: yes
+  vars_files:
+    - versions.yml
+
+  tasks:
+    - name: Download Maven Runner
+      get_url:
+        url: "https://example.com/maven-runner-{{ maven_runner_version }}.tar.gz"
+        dest: "/tmp/maven-runner-{{ maven_runner_version }}.tar.gz"
+
+    - name: Extract Maven Runner
+      unarchive:
+        src: "/tmp/maven-runner-{{ maven_runner_version }}.tar.gz"
+        dest: "/appli/bin"
+        remote_src: yes
+
+    - name: Create symlink for Maven Runner
+      file:
+        src: "/appli/bin/maven-runner-{{ maven_runner_version }}"
+        dest: "/usr/local/bin/maven-runner"
+        state: link

@@ -1,0 +1,31 @@
+---
+- name: Install Groovy
+  hosts: all
+  become: yes
+  vars_files:
+    - versions.yml
+
+  tasks:
+    - name: Download Groovy
+      get_url:
+        url: "https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-{{ groovy_version }}.zip"
+        dest: "/tmp/apache-groovy-binary-{{ groovy_version }}.zip"
+
+    - name: Extract Groovy
+      unarchive:
+        src: "/tmp/apache-groovy-binary-{{ groovy_version }}.zip"
+        dest: "/appli/bin"
+        remote_src: yes
+
+    - name: Create symlink for Groovy
+      file:
+        src: "/appli/bin/groovy-{{ groovy_version }}"
+        dest: "/usr/local/bin/groovy"
+        state: link
+
+    - name: Add Groovy to PATH
+      lineinfile:
+        path: /etc/profile.d/groovy.sh
+        line: 'export PATH=/usr/local/bin/groovy/bin:$PATH'
+        create: yes
+      notify: Refresh profile

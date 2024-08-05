@@ -1,0 +1,47 @@
+---
+- name: Install Git
+  hosts: all
+  become: yes
+  vars_files:
+    - versions.yml
+
+  tasks:
+    - name: Download Git
+      get_url:
+        url: "https://github.com/git/git/archive/v{{ git_version }}.tar.gz"
+        dest: "/tmp/git-{{ git_version }}.tar.gz"
+
+    - name: Extract Git
+      unarchive:
+        src: "/tmp/git-{{ git_version }}.tar.gz"
+        dest: "/tmp"
+        remote_src: yes
+
+    - name: Install dependencies for Git
+      yum:
+        name: 
+          - gcc
+          - autoconf
+          - curl-devel
+          - expat-devel
+          - gettext-devel
+          - openssl-devel
+          - zlib-devel
+          - perl-ExtUtils-MakeMaker
+        state: present
+
+    - name: Compile and install Git
+      command: ./configure --prefix=/appli/bin/git-{{ git_version }}
+      args:
+        chdir: /tmp/git-{{ git_version }}
+
+    - name: Make and install Git
+      command: make install
+      args:
+        chdir: /tmp/git-{{ git_version }}
+
+    - name: Create symlink for Git
+      file:
+        src: "/appli/bin/git-{{ git_version }}"
+        dest: "/usr/local/bin/git"
+        state: link
