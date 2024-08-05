@@ -1,15 +1,16 @@
 ---
 - name: Install development tools
-  hosts: all
+  hosts: localhost
+  connection: local
   become: yes
   vars_files:
     - versions.yml
 
   tasks:
-    - import_playbook: install_git.yml
-    - import_playbook: install_jdk8.yml
-    - import_playbook: install_jdk11.yml
-    - import_playbook: install_maven.yml
-    - import_playbook: install_groovy.yml
-    - import_playbook: install_ant.yml
-    - import_playbook: install_maven_runner.yml
+    - include: install_git.yml
+    - include: install_jdk8.yml
+    - include: install_jdk11.yml
+    - include: install_maven.yml
+    - include: install_groovy.yml
+    - include: install_ant.yml
+    - include: install_maven_runner.yml
